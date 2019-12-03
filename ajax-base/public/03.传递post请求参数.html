@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <p>
+      <input type="text" id="username" />
+      <input type="password" id="psw" />
+      <input type="button" id="btn" value="提交" />
+    </p>
+    <script>
+      // 获取按钮对象
+      var btn = document.getElementById("btn");
+      // 获取名字输入框对象
+      var username = document.getElementById("username");
+      // 获取密码输入框对象
+      var psw = document.getElementById("psw");
+
+      // 为按钮对象添加点击事件
+      btn.onclick = function() {
+        // 获取名字输入框中的值
+        var user = username.value;
+        // 获取密码输入框中的值
+        var password = psw.value;
+        // 创建ajax对象
+        var xhr = new XMLHttpRequest();
+        // 通知ajax对象以什么方式，向什么地方发送请求
+        xhr.open("post", "http://localhost:3000/post");
+        // 拼接请求参数
+        var param = `username=${user}&password=${password}`;
+        // 设置请求参数格式类型，post请求时必须设置
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        // 发送请求
+        xhr.send(param);
+        // 获取服务器端向客户端返回的数据
+        xhr.onload = function() {
+          console.log(xhr.responseText);
+        };
+      };
+    </script>
+  </body>
+</html>

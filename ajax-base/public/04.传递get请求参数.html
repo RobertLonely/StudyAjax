@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>
+      <input type="text" id="username" />
+      <input type="password" id="password" />
+      <input type="button" value="提交" id="btn" />
+    </p>
+    <script>
+      // 获取提交按钮
+      var btn = document.getElementById("btn");
+      // 获取输入框
+      var username = document.getElementById("username");
+      var password = document.getElementById("password");
+      // 为按钮添加点击事件
+      btn.onclick = function() {
+        // 获取输入框的值
+        var user = username.value;
+        var psw = password.value;
+        // 创建ajax对象
+        var xhr = new XMLHttpRequest();
+        // 拼接请求参数
+        var param = `username=${user}&password=${psw}`;
+        // 配置ajax对象
+        xhr.open("get", "http://localhost:3000/get?" + param);
+        //发送请求
+        xhr.send();
+        // 获取服务器端向客户端返回的数据
+        xhr.onload = function() {
+          console.log(this.responseText);
+        };
+      };
+    </script>
+  </body>
+</html>
