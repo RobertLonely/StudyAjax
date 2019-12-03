@@ -14,8 +14,8 @@ const app = express();
 app.use(express.static(path.join(__dirname, "./public")));
 
 // 配置body-parser模块，拦截所有请求
-// app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 
 // 01对应路由处理函数
 app.get("/ajax", (req, res) => {
@@ -57,8 +57,6 @@ app.get("/error", (req, res) => {
 // 08对应路由处理函数
 app.get("/cache", (req, res) => {
   fs.readFile("./public/test.txt", "utf8", (err, data) => {
-    console.log(data);
-
     res.send(data);
   });
 });
@@ -67,6 +65,18 @@ app.get("/cache", (req, res) => {
 app.get("/async", (req, res) => {
   res.send("3");
 });
+
+// 10对应路由处理函数
+app.use("/package", (req, res) => {
+  if (req.method === "GET") {
+    console.log("GET");
+    res.send(req.query);
+  } else {
+    console.log("POST");
+    res.send(req.body);
+  }
+});
+
 // 监听web端口
 app.listen(3000);
 console.log("服务器启动成功");
