@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>搜索框输入文字自动提示</title>
+    <link
+      rel="stylesheet"
+      href="/assets/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <style type="text/css">
+      .container {
+        padding-top: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-inline">
+        <div class="form-group">
+          <select class="form-control" id="province">
+            <option>请选择省份</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="city">
+            <option>请选择城市</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="area">
+            <option>请选择县城</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <script src="/js/ajax.js"></script>
+    <script src="/js/template-web.js"></script>
+    <!-- 省份模板 -->
+    <script type="text/html" id="provinceTpl">
+      <option>请选择省份</option>
+      {{each data}}
+      <option value="{{$value.id}}" >{{$value.name}}</option>
+      {{/each}}
+    </script>
+    <!-- 城市模板 -->
+    <script type="text/html" id="cityTpl">
+      <option>请选择城市</option>
+      {{each data}}
+      <option value="{{$value.id}}" >{{$value.name}}</option>
+      {{/each}}
+    </script>
+    <!-- 县城模板 -->
+    <script type="text/html" id="areaTpl">
+      <option>请选择县城</option>
+      {{each data}}
+      <option value="{{$value.id}}" >{{$value.name}}</option>
+      {{/each}}
+    </script>
+
+    <script>
+      // 获取省份选择框
+      var province = document.getElementById("province");
+      // 获取城市选择框
+      var city = document.getElementById("city");
+      // 获取县城选择框
+      var area = document.getElementById("area");
+
+      // 异步获取省份信息
+      ajax({
+        type: "get",
+        url: "http://localhost:3000/province",
+        success: function(data) {
+          // 将服务器端返回的数据与指定模板绑定
+          var html = template("provinceTpl", { data });
+          // 将模板添加到选择框的选项中
+          province.innerHTML = html;
+        }
+      });
+
+      // 为省份选择框绑定事件
+      province.onchange = function() {
+        // 当切换换城市时，重置县城
+        area.innerHTML = "<option>请选择县城</option>";
+        // 获取选中省份的id
+        var id = province.value;
+        // 根据id异步获取对应省份的城市
+        ajax({
+          type: "get",
+          url: "http://localhost:3000/cities",
+          data: { id },
+          success: function(data) {
+            // 将服务器端返回的数据与指定模板绑定
+            var html = template("cityTpl", { data });
+            // 将模板添加到选择框的选项中
+            city.innerHTML = html;
+          }
+        });
+      };
+
+      // 为城市选择框绑定事件
+      city.onchange = function() {
+        // 获取选中城市的id
+        var id = city.value;
+        // 根据id异步获取对应城市的县城
+        ajax({
+          type: "get",
+          url: "http://localhost:3000/areas",
+          data: { id },
+          success: function(data) {
+            // 将服务器端返回的数据与指定模板绑定
+            var html = template("areaTpl", { data });
+            // 将模板添加到选择框的选项中
+            area.innerHTML = html;
+          }
+        });
+      };
+    </script>
+  </body>
+</html>

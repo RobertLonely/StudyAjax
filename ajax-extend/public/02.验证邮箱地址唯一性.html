@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>验证邮箱地址是否已经注册</title>
+    <link
+      rel="stylesheet"
+      href="/assets/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <style type="text/css">
+      p:not(:empty) {
+        padding: 15px;
+      }
+      .container {
+        padding-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-group">
+        <label>邮箱地址</label>
+        <input
+          type="email"
+          class="form-control"
+          placeholder="请输入邮箱地址"
+          id="email"
+        />
+      </div>
+      <p id="info"></p>
+    </div>
+    <script src="./js/ajax.js"></script>
+    <script>
+      // 获取邮箱输入框
+      var email = document.getElementById("email");
+      // 获取信息提示元素
+      var info = document.getElementById("info");
+
+      // 为输入框绑定失去焦点事件
+      email.onblur = function() {
+        // 一开始就清空信息
+        info.innerHTML = "";
+        // 获取输入框中的值
+        var emailValue = email.value;
+        // 验证邮箱正则
+        var reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+        if (!reg.test(emailValue)) {
+          info.innerHTML = "邮箱格式错误，请重新输入";
+          info.className = "bg-danger";
+          return;
+        }
+
+        ajax({
+          type: "get",
+          url: "http://localhost:3000/verifyEmailAdress",
+          data: { email: emailValue },
+          success: function(data) {
+            info.innerHTML = data.message;
+            info.className = "bg-success";
+          },
+          error: function(data) {
+            info.innerHTML = data.message;
+            info.className = "bg-danger";
+          }
+        });
+      };
+    </script>
+  </body>
+</html>

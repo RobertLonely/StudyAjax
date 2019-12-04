@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="box"></div>
+    <!-- 1. 导入模板文件 -->
+    <script src="./js/template-web.js"></script>
+    <!-- 导入 ajax函数-->
+    <script src="./js/ajax.js"></script>
+    <!-- 2. 创建模板 -->
+    <script type="text/html" id="tpl">
+      <h1>{{data}}</h1>
+    </script>
+    <script>
+      ajax({
+        type: "get",
+        url: "http://localhost:3000/artTemplate",
+        success: function(data) {
+          // 3. 告诉模板引擎将哪个数据和哪个模板进行拼接
+          var html = template("tpl", { data });
+          // 将数据添加到dom中
+          document.getElementById("box").innerHTML = html;
+        }
+      });
+    </script>
+  </body>
+</html>
