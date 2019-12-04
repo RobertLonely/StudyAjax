@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">动态创建script</button>
+    <script>
+      function fn(data) {
+        console.log(data);
+      }
+    </script>
+    <!-- <script src="http://localhost:8000/optimize?callback=fn"></script> -->
+
+    <script>
+      var btn = document.getElementById("btn");
+      // 1.动态创建script标签，防止重复请求
+      btn.onclick = function() {
+        var script = document.createElement("script");
+        // 2.将客户端需要的函数名传递给服务器端，防止任何一方直接命名导致另外一方冲突
+        script.src = "http://localhost:8000/optimize?callback=fn";
+        // 将script标签追加到页面中
+        document.body.appendChild(script);
+        // 为script标签添加onload事件
+        script.onload = function() {
+          // 将body中的script标签删除掉
+          document.body.removeChild(script);
+        };
+      };
+    </script>
+  </body>
+</html>
