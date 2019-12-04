@@ -5,23 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="/assets/bootstrap/dist/css/bootstrap.min.css"
+    />
   </head>
   <body>
     <form id="form">
-      <input type="file" name="file" id="file" />
+      <input type="file" name="file" />
       <input type="button" value="提交" id="btn" />
     </form>
+    <div class="progress">
+      <div class="progress-bar" style="width: 0%;" id="bar">0%</div>
+    </div>
+    <div id="preview"></div>
     <script>
       var btn = document.getElementById("btn");
       var form = document.getElementById("form");
-      var file = document.getElementById("file");
+      var preview = document.getElementById("preview");
+      var bar = document.getElementById("bar");
       btn.onclick = function() {
         var formData = new FormData(form);
         var xhr = new XMLHttpRequest();
         xhr.open("post", "http://localhost:3000/binary");
+
+        xhr.upload.onprogress = function(e) {
+          // e.loaded 文件已经上传了多少
+          // e.total  上传文件的总大小
+          // 上传进度
+          var plan = (e.loaded / e.total) * 100 + "%";
+          // 设置进度条的进度
+          bar.style.width = plan;
+          // 设置进度条具体显示信息
+          bar.innerHTML = plan;
+
+          console.log(plan);
+        };
+
         xhr.send(formData);
         xhr.onload = function() {
-          console.log(this.responseText);
+          // 创建img标签
+          var img = document.createElement("img");
+          // 将服务器端返回的图片路径赋值给src属性
+          img.src = this.responseText;
+          // 当图片加载完成，将img添加到页面中
+          img.onload = function() {
+            preview.appendChild(img);
+          };
         };
       };
     </script>
