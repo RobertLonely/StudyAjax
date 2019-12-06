@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <script src="./js/jquery.min.js"></script>
+  <body>
+    <script>
+      $.ajax({
+        type: "get",
+        url: "/base",
+        data: { name: "罗伯特", age: 18 },
+        contentType: "application/x-www-form-urlencoded",
+        // 在客户端发送请求之前，想要进行的操作都可以在这个函数中进行
+        beforeSend: function() {
+          console.log("我先出来了");
+        },
+        // response为服务器端返回的数据，方法内部会自动将json字符串转换为json对象
+        success: function(response) {
+          console.log(response);
+        },
+        // 请求失败以后函数被调用
+        error: function(xhr) {
+          console.log(xhr, 12);
+        }
+      });
+    </script>
+  </body>
+</html>

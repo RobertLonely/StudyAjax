@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="./js/jquery.min.js"></script>
+    <script>
+      // $.ajax({
+      //   url: "/jsonp",
+      //   data: { username: "罗伯特", age: 18 },
+      //   // 代表现在要发送的是jsonp请求
+      //   dataType: "jsonp",
+      //   success: function(response) {
+      //     console.log(response);
+      //   }
+      // });
+
+      function fnName(data) {
+        console.log(123 + data);
+      }
+
+      $.ajax({
+        url: "/jsonp",
+        // 代表现在要发送的是jsonp请求
+        dataType: "jsonp",
+        // 修改callback参数名称
+        jsonp: "cb",
+        // 指定回调参数名称
+        jsonpCallback: "fnName",
+        success: function(response) {
+          console.log(response);
+        }
+      });
+    </script>
+  </body>
+</html>

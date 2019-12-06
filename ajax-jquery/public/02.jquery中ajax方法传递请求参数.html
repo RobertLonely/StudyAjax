@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="./js/jquery.min.js"></script>
+    <script>
+      // $.ajax({
+      //   type: "post",
+      //   url: "/params",
+      //   data: { username: "罗伯特", age: 18 },
+      //   contentType: "application/x-www-form-urlencoded",
+      //   success: function(response) {
+      //     console.log(response);
+      //   }
+      // });
+
+      $.ajax({
+        type: "post",
+        url: "/params",
+        data: JSON.stringify({ username: "罗伯特", age: 18 }),
+        contentType: "application/json",
+        success: function(response) {
+          console.log(response);
+        }
+      });
+    </script>
+  </body>
+</html>

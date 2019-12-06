@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form>
+      <input type="text" name="username" id="user" />
+      <input type="password" name="password" id="psd" />
+      <input type="submit" value="提交" />
+    </form>
+    <script src="./js/jquery.min.js"></script>
+    <script>
+      $("form").on("submit", function() {
+        serializeObject($(this));
+        return false;
+      });
+      // 将表单中用户输入的内容转换为对象类型
+      function serializeToObj(data) {
+        var result = {};
+        // 处理结果对象
+        var result = {};
+        // [{name: 'username', value: '用户输入的内容'}, {name: 'password', value: '123456'}]
+        var params = obj.serializeArray();
+        // 循环数组 将数组转换为对象类型
+        $.each(params, function(index, value) {
+          result[value.name] = value.value;
+        });
+        // 将处理的结果返回到函数外部
+        return result;
+      }
+    </script>
+  </body>
+</html>

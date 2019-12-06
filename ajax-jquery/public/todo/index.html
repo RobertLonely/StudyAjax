@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Todo List</title>
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/index.css" />
+    <link rel="stylesheet" href="/js/nprogress/nprogress.css" />
+  </head>
+  <body>
+    <section class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
+        <input
+          type="text"
+          class="new-todo"
+          placeholder="What needs to be done?"
+          autofocus
+          id="task"
+        />
+      </header>
+      <!-- 默认情况下，这个部分应该隐藏起来，当有todos时显示出来 -->
+      <section class="main">
+        <input class="toggle-all" type="checkbox" />
+        <ul class="todo-list" id="todo-list"></ul>
+      </section>
+      <!-- 这个页脚在默认情况下应该隐藏起来，当有待办事项时显示出来 -->
+      <footer class="footer">
+        <!-- 这应该是' 0项左'默认 -->
+        <span class="todo-count"><strong id="count">0</strong> item left</span>
+        <!-- 如果不实现路由，请删除此选项 -->
+        <ul class="filters">
+          <li>
+            <a class="selected" href="javascript:;">All</a>
+          </li>
+          <li>
+            <a href="javascript:;">Active</a>
+          </li>
+          <li>
+            <a href="javascript:;">Completed</a>
+          </li>
+        </ul>
+        <!-- 若未完成项剩0则为隐藏项 -->
+        <button class="clear-completed">Clear completed</button>
+      </footer>
+    </section>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/template-web.js"></script>
+    <script src="/js/nprogress/nprogress.js"></script>
+
+    <!-- 创建模板 -->
+    <script type="text/html" id="tpl">
+      {{each tasks}}
+      <li>
+      	<div class="view">
+      		<input class="toggle" type="checkbox" />
+      		<label>{{$value.title}}</label>
+      		<button class="destroy" data-id="{{$value._id}}"></button>
+      	</div>
+      	<input class="edit">
+      </li>
+      {{/each}}
+    </script>
+
+    <script>
+      // 获得头部输入框
+      var headInput = $("#task");
+      // 获取列表ul
+      var ul = $("#todo-list");
+      // 添加存放任务列表的数组
+      var taskArr = [];
+
+      // 封装渲染任务列表的函数
+      function render() {
+        // 将数组中的数据和指定模板进行拼接
+        var html = template("tpl", { tasks: taskArr });
+        // 将拼接好的模板渲染到页面中去
+        ul.html(html);
+      }
+
+      // 异步获取数据库中的任务列表
+      $.ajax({
+        type: "get",
+        url: "/todo/task",
+        success: function(response) {
+          // 将查询出来的数组赋值给存放任务列表的数组
+          taskArr = response;
+          // 渲染页面
+          render();
+        }
+      });
+
+      // 为头部输入框绑定键盘抬起事件
+      headInput.on("keyup", function(e) {
+        // 判断用户是否是按下回车键
+        if (e.keyCode === 13) {
+          //  获取任务名称
+          var taskName = $(this)
+            .val()
+            .trim();
+          if (taskName.length !== 0) {
+            $.ajax({
+              type: "post",
+              url: "/todo/addTask",
+              data: { title: taskName },
+              success: function(response) {
+                // 将新增的任务，添加到任务列表数组中
+                taskArr.unshift(response);
+                // 渲染页面
+                render();
+                // 清空头部输入框
+                headInput.val("");
+              }
+            });
+          }
+        }
+      });
+
+      // 为删除按钮绑定点击事件，由于是动态生成，所以采用委托的方式
+      ul.on("click", "button", function() {
+        // 获取要删除任务的id
+        var taskId = $(this).attr("data-id");
+        // 根据任务id,异步删除数据库中的任务
+        $.ajax({
+          type: "get",
+          url: "/todo/deleteTask",
+          data: { _id: taskId },
+          success: function(response) {
+            // 遍历任务数组，删除对应任务
+            var index = taskArr.findIndex(item => item._id === response._id);
+            taskArr.splice(index, 1);
+            // 渲染页面
+            render();
+          }
+        });
+      });
+
+      // 为复选框添加onchange事件，由于是动态生成，所以采用委托的方式
+      ul.on("change", ".toggle", function() {
+        // 获取复选框是否选中
+        var isSelect = $(this).prop("checked");
+        // 获取被选中复选框对应的id
+        var taskId = $(this)
+          .siblings("button")
+          .attr("data-id");
+        // 将选中状态，异步提交到数据库
+        $.ajax({
+          type: "post",
+          url: "/todo/modifyTask",
+          data: JSON.stringify({ _id: taskId, completed: isSelect }),
+          contentType: "application/json",
+          success: function(response) {
+            // 将复选框更新后的状态，同步更新到任务数组中
+            var select = taskArr.find(item => item._id === taskId);
+            select.completed = response.completed;
+            //渲染页面
+            render();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
